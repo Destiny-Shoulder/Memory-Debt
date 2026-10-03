@@ -1,0 +1,1906 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#172033" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Debt of Memory" />
+<link rel="manifest" href="./manifest.json" />
+<link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
+<title>Debt of Memory</title>
+<style>
+:root{
+  --bg:#f5f7fb;--panel:#fff;--text:#172033;--muted:#667085;--line:#e4e7ec;
+  --danger:#d92d20;--warning:#b54708;--success:#067647;--primary:#3448c5;
+  --shadow:0 10px 30px rgba(16,24,40,.08)
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;background:var(--bg);color:var(--text)}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}
+.app{max-width:980px;margin:auto;padding:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.brand{font-weight:800;font-size:22px}
+.stats,.muted{font-size:13px;color:var(--muted)}
+.userbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab{border:1px solid var(--line);background:var(--panel);padding:9px 13px;border-radius:12px;color:var(--muted)}
+.tab.active{background:var(--text);color:#fff;border-color:var(--text)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
+.hidden{display:none!important}
+.review-wrap{min-height:430px;display:flex;flex-direction:column}
+.progress{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:13px;margin-bottom:12px}
+.card{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 10px}
+.score-pill{display:inline-flex;padding:6px 10px;border-radius:999px;background:#f2f4f7;color:var(--muted);font-size:13px;margin-bottom:18px}
+.front{font-size:clamp(28px,5vw,48px);font-weight:800;white-space:pre-wrap;word-break:break-word}
+.divider{width:min(440px,80%);height:1px;background:var(--line);margin:24px auto}
+.back{font-size:clamp(22px,4vw,36px);white-space:pre-wrap;word-break:break-word}
+.audio-wrap{margin-top:18px;width:min(440px,100%)}
+.audio-wrap audio{width:100%}
+.audio-preview{margin-top:8px}
+.audio-preview audio{width:100%}
+.image-wrap{margin-top:18px;width:min(520px,100%);display:flex;justify-content:center}
+.image-wrap img{max-width:100%;max-height:420px;object-fit:contain;border-radius:14px;border:1px solid var(--line)}
+.image-preview{margin-top:8px}
+.image-preview img{max-width:220px;max-height:180px;object-fit:contain;border-radius:12px;border:1px solid var(--line)}
+.show-answer{align-self:center;border:0;border-radius:14px;padding:14px 22px;background:var(--primary);color:#fff;font-weight:700;min-width:180px}
+.rating{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.rate{border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px 10px;font-weight:750}
+.rate small{display:block;font-weight:500;color:var(--muted);margin-top:4px}
+.rate.wrong{color:var(--danger)} .rate.unsure{color:var(--warning)} .rate.correct{color:var(--success)}
+.empty{text-align:center;padding:70px 10px}
+.empty h2{margin:0 0 10px}
+.empty p{color:var(--muted)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field.full{grid-column:1/-1}
+label{font-size:13px;color:var(--muted);font-weight:650}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;color:var(--text)}
+textarea{min-height:110px;resize:vertical}
+.primary{border:0;background:var(--primary);color:white;padding:11px 16px;border-radius:12px;font-weight:700}
+.secondary{border:1px solid var(--line);background:#fff;color:var(--text);padding:10px 14px;border-radius:12px}
+.danger{border:1px solid #fecdca;background:#fff;color:var(--danger);padding:8px 10px;border-radius:10px}
+.list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.row{display:grid;grid-template-columns:1fr auto;gap:12px;border:1px solid var(--line);border-radius:14px;padding:13px}
+.row-title{font-weight:750;white-space:pre-wrap}
+.row-sub{font-size:12px;color:var(--muted);margin-top:5px}
+.row-actions{display:flex;gap:7px;align-items:flex-start}
+.toolbar{display:flex;gap:8px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.help{font-size:13px;color:var(--muted);line-height:1.6}
+.rule-table{width:100%;border-collapse:collapse;margin-top:10px}
+.rule-table th,.rule-table td{border-bottom:1px solid var(--line);padding:10px;text-align:left}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#101828;color:#fff;padding:10px 14px;border-radius:999px;opacity:0;pointer-events:none;transition:.2s;z-index:50}
+.toast.show{opacity:1}
+.auth-shell{max-width:520px;margin:8vh auto;padding:18px}
+.auth-card{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:24px}
+.auth-title{font-size:28px;font-weight:850;margin:0 0 8px}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0}
+.auth-message{min-height:20px;margin-top:10px;font-size:13px;color:var(--muted)}
+.notice{border:1px solid #b2ddff;background:#eff8ff;border-radius:12px;padding:12px;font-size:13px;line-height:1.5;margin:12px 0}
+.errorbox{border:1px solid #fecdca;background:#fef3f2;color:#b42318;border-radius:12px;padding:12px;margin:12px 0;white-space:pre-wrap}
+.security{border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:18px}
+.security strong{display:block;margin-bottom:6px}
+.sync-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#17b26a;margin-right:5px}
+.connection-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--muted);background:#fff}
+.connection-pill.offline{border-color:#fedf89;background:#fffaeb;color:#93370d}
+.connection-pill.pending{border-color:#b2ddff;background:#eff8ff;color:#175cd3}
+.offline-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.offline-note{border:1px solid var(--line);border-radius:13px;padding:11px 12px;font-size:13px;color:var(--muted);line-height:1.55}
+.media-status{font-size:12px;color:var(--muted)}
+
+.deck-badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:#eef2ff;color:#3538cd;font-size:12px;font-weight:700;margin-left:6px}
+.deck-manager{display:grid;grid-template-columns:1fr auto;gap:8px;margin:14px 0}
+.deck-row{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--line);border-radius:13px;padding:12px}
+.deck-row-name{font-weight:750}
+.deck-row-count{font-size:12px;color:var(--muted);margin-top:3px}
+.filterbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.filterbar select{max-width:260px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0 22px}
+.stat-card{border:1px solid var(--line);border-radius:15px;padding:14px;background:#fff}
+.stat-label{font-size:12px;color:var(--muted);font-weight:700}
+.stat-value{font-size:28px;font-weight:850;margin-top:4px}
+.stat-sub{font-size:12px;color:var(--muted);margin-top:3px}
+.stats-section{margin-top:24px}
+.stats-section h3{margin:0 0 12px}
+.activity-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.activity-chart{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end;min-height:180px;border:1px solid var(--line);border-radius:15px;padding:16px 10px 10px}
+.activity-chart.daily30{grid-template-columns:repeat(30,minmax(34px,1fr));min-width:1080px}
+.activity-chart.biweekly{grid-template-columns:repeat(6,minmax(90px,1fr));min-width:640px}
+.activity-item{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:145px;gap:5px}
+.activity-count{font-size:11px;color:var(--muted)}
+.activity-bar-wrap{height:100px;width:100%;display:flex;align-items:flex-end;justify-content:center}
+.activity-bar{width:min(34px,70%);min-height:2px;border-radius:8px 8px 3px 3px;background:var(--primary)}
+.activity-day{font-size:11px;color:var(--muted);text-align:center;white-space:nowrap}
+.deck-stat-list{display:flex;flex-direction:column;gap:10px}
+.deck-stat-row{border:1px solid var(--line);border-radius:14px;padding:12px}
+.deck-stat-top{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.deck-stat-name{font-weight:800}
+.deck-stat-meta{font-size:12px;color:var(--muted);margin-top:5px}
+.progress-track{height:8px;background:#f2f4f7;border-radius:999px;overflow:hidden;margin-top:9px}
+.progress-fill{height:100%;background:var(--primary);border-radius:999px}
+.weak-list{display:flex;flex-direction:column;gap:9px}
+.weak-row{border:1px solid var(--line);border-radius:14px;padding:12px}
+.weak-title{font-weight:800;white-space:pre-wrap;word-break:break-word}
+.weak-meta{font-size:12px;color:var(--muted);margin-top:5px}
+@media(max-width:650px){
+  .stat-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:650px){
+  .app{padding:12px}.panel{padding:14px}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}
+  .rating{grid-template-columns:1fr}.review-wrap{min-height:520px}
+  header{align-items:flex-start}.userbar{max-width:55%}.row{grid-template-columns:1fr}.row-actions{justify-content:flex-end}
+}
+</style>
+</head>
+<body>
+
+<div id="configError" class="auth-shell hidden">
+  <div class="auth-card">
+    <h1 class="auth-title">Debt of Memory</h1>
+    <div class="errorbox" id="configErrorText"></div>
+    <p class="help">先に <code>config.js</code> に Supabase Project URL と <strong>Publishable Key</strong> を設定してください。Secret Key / service_role は絶対に入れないでください。</p>
+  </div>
+</div>
+
+<div id="authScreen" class="auth-shell hidden">
+  <div class="auth-card">
+    <h1 class="auth-title">Debt of Memory</h1>
+    <p class="muted">ログインすると、カード・評価値・復習日・音声を複数端末で同期します。</p>
+    <div class="auth-tabs">
+      <button id="loginModeBtn" class="primary">ログイン</button>
+      <button id="signupModeBtn" class="secondary">新規登録</button>
+    </div>
+    <div class="field">
+      <label>メールアドレス</label>
+      <input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com">
+    </div>
+    <div class="field" style="margin-top:12px">
+      <label>パスワード</label>
+      <input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="8文字以上">
+    </div>
+    <button id="authSubmitBtn" class="primary" style="width:100%;margin-top:16px">ログイン</button>
+    <div id="authMessage" class="auth-message"></div>
+  </div>
+</div>
+
+<div id="mainApp" class="app hidden">
+  <header>
+    <div>
+      <div class="brand">Debt of Memory</div>
+      <div class="stats" id="headerStats"></div>
+    </div>
+    <div class="userbar">
+      <span id="connectionStatus" class="connection-pill">確認中…</span>
+      <span class="muted" id="userEmail"></span>
+      <button class="secondary" id="syncBtn">同期</button>
+      <button class="secondary" id="resetSessionBtn">復習を更新</button>
+      <button class="secondary" id="logoutBtn">ログアウト</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="review">復習</button>
+    <button class="tab" data-tab="add">カード追加</button>
+    <button class="tab" data-tab="cards">カード一覧</button>
+    <button class="tab" data-tab="decks">デッキ管理</button>
+    <button class="tab" data-tab="stats">学習統計</button>
+    <button class="tab" data-tab="settings">設定</button>
+  </nav>
+
+  <section id="review" class="panel">
+    <div class="filterbar">
+      <label for="reviewDeckFilter">復習するデッキ</label>
+      <select id="reviewDeckFilter"></select>
+    </div>
+    <div id="reviewContent"></div>
+  </section>
+
+  <section id="add" class="panel hidden">
+    <h2>カード追加</h2>
+    <div class="grid">
+      <div class="field full">
+        <label>表</label>
+        <textarea id="frontInput" placeholder="問題・単語など"></textarea>
+      </div>
+      <div class="field full">
+        <label>裏</label>
+        <textarea id="backInput" placeholder="答え・意味など"></textarea>
+      </div>
+      <div class="field">
+        <label>デッキ</label>
+        <select id="deckInput"></select>
+      </div>
+      <div class="field">
+        <label>初期評価値</label>
+        <input id="scoreInput" type="number" value="0" step="1">
+      </div>
+      <div class="field">
+        <label>次回復習日</label>
+        <input id="dueInput" type="date">
+      </div>
+      <div class="field full">
+        <label>音声（任意）</label>
+        <input id="audioInput" type="file" accept="audio/*">
+        <div id="audioPreview" class="audio-preview hidden"></div>
+              </div>
+      <div class="field full">
+        <label>表面画像（任意）</label>
+        <input id="frontImageInput" type="file" accept="image/*">
+        <div id="frontImagePreview" class="image-preview hidden"></div>
+      </div>
+      <div class="field full">
+        <label>裏面画像（任意）</label>
+        <input id="backImageInput" type="file" accept="image/*">
+        <div id="backImagePreview" class="image-preview hidden"></div>
+      </div>
+      <div class="field full">
+        <button class="primary" id="addBtn">カードを追加</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="cards" class="panel hidden">
+    <div class="toolbar">
+      <h2 style="margin:0">カード一覧</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select id="cardsDeckFilter" style="max-width:220px"></select>
+        <input id="searchInput" placeholder="検索" style="max-width:260px">
+      </div>
+    </div>
+    <div class="list" id="cardList"></div>
+  </section>
+
+
+  <section id="decks" class="panel hidden">
+    <h2>デッキ管理</h2>
+    <p class="help">「会計」「英語」「ファイナンス」など、好きな分類を作れます。デッキを削除してもカード自体は削除されず「未分類」に戻ります。</p>
+    <div class="offline-actions">
+      <button class="secondary" id="downloadAllOfflineBtn">全カードの画像・音声をオフライン保存</button>
+      <button class="secondary" id="clearOfflineMediaBtn">端末の画像・音声キャッシュを削除</button>
+    </div>
+    <div class="offline-note">
+      カード本文は同期時に自動で端末へ保存されます。画像・音声は上のボタン、または各デッキの「オフライン保存」で端末に保存できます。
+    </div>
+    <div class="deck-manager">
+      <input id="newDeckName" maxlength="60" placeholder="新しいデッキ名">
+      <button class="primary" id="addDeckBtn">追加</button>
+    </div>
+    <div class="list" id="deckList"></div>
+  </section>
+
+  <section id="stats" class="panel hidden">
+    <div class="toolbar">
+      <div>
+        <h2 style="margin:0">学習統計</h2>
+        <div class="help">今日・直近7日・直近30日の復習履歴から集計します。</div>
+      </div>
+      <button class="secondary" id="refreshStatsBtn">統計を更新</button>
+    </div>
+    <div id="statsContent">
+      <div class="empty"><p>統計を読み込み中…</p></div>
+    </div>
+  </section>
+
+  <section id="settings" class="panel hidden">
+    <h2>復習ルール</h2>
+    <p class="help">1〜4点は固定。5点・6点・7点以上は自分で日数を設定します。設定はクラウド同期されます。</p>
+    <table class="rule-table">
+      <tr><th>評価値</th><th>次回</th></tr>
+      <tr><td>0点以下</td><td>今日</td></tr>
+      <tr><td>1点</td><td>1日後</td></tr>
+      <tr><td>2点</td><td>3日後</td></tr>
+      <tr><td>3点</td><td>7日後</td></tr>
+      <tr><td>4点</td><td>14日後</td></tr>
+      <tr><td>5点</td><td><input id="days5" type="number" min="1" placeholder="日数"></td></tr>
+      <tr><td>6点</td><td><input id="days6" type="number" min="1" placeholder="日数"></td></tr>
+      <tr><td>7点以上</td><td><input id="days7" type="number" min="1" placeholder="日数"></td></tr>
+    </table>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
+      <button class="primary" id="saveSettingsBtn">設定を保存</button>
+      <button class="secondary" id="migrateBtn">旧ローカルデータを取り込む</button>
+    </div>
+
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2"></script>
+<script src="./config.js"></script>
+<script>
+"use strict";
+
+const AUDIO_BUCKET = "card-audio";
+const IMAGE_BUCKET = "card-images";
+const OLD_STORAGE_KEY = "my-anki-v1";
+const OLD_SETTINGS_KEY = "my-anki-settings-v1";
+const MAX_AUDIO_BYTES = 10 * 1024 * 1024;
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+
+let sb = null;
+let currentUser = null;
+let cards = [];
+let decks = [];
+let settings = { days5:"", days6:"", days7:"" };
+let selectedReviewDeck = "all";
+let selectedCardsDeck = "all";
+let learningStats = {
+  today:{total:0,correct:0,unsure:0,wrong:0},
+  daily7:[],
+  daily30:[],
+  biweekly:[],
+  deck30:[],
+  weak:[]
+};
+let sessionQueue = [];
+let sessionIndex = 0;
+let answerShown = false;
+let authMode = "login";
+let audioPreviewUrl = null;
+let frontImagePreviewUrl = null;
+let backImagePreviewUrl = null;
+let reviewHistory = [];
+let offlineDbPromise = null;
+let queueFlushRunning = false;
+
+const OFFLINE_DB_NAME = "my-anki-offline-v1";
+const OFFLINE_DB_VERSION = 1;
+const OFFLINE_STATE_KEY = "snapshot";
+
+
+
+function openOfflineDB(){
+  if(offlineDbPromise) return offlineDbPromise;
+  offlineDbPromise = new Promise((resolve,reject)=>{
+    const req=indexedDB.open(OFFLINE_DB_NAME,OFFLINE_DB_VERSION);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains("state")) db.createObjectStore("state",{keyPath:"key"});
+      if(!db.objectStoreNames.contains("media")) db.createObjectStore("media",{keyPath:"key"});
+      if(!db.objectStoreNames.contains("queue")) db.createObjectStore("queue",{keyPath:"id"});
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+  return offlineDbPromise;
+}
+async function dbPut(store,value){
+  const db=await openOfflineDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(store,"readwrite");
+    tx.objectStore(store).put(value);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+async function dbGet(store,key){
+  const db=await openOfflineDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(store,"readonly");
+    const req=tx.objectStore(store).get(key);
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function dbGetAll(store){
+  const db=await openOfflineDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(store,"readonly");
+    const req=tx.objectStore(store).getAll();
+    req.onsuccess=()=>resolve(req.result||[]);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function dbDelete(store,key){
+  const db=await openOfflineDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(store,"readwrite");
+    tx.objectStore(store).delete(key);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+async function dbClear(store){
+  const db=await openOfflineDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(store,"readwrite");
+    tx.objectStore(store).clear();
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+function isOnline(){
+  return navigator.onLine;
+}
+function mediaKey(cardId,kind){
+  return `${currentUser?.id||"unknown"}:${cardId}:${kind}`;
+}
+async function saveMediaBlob(cardId,kind,blob,name="",cloudPath=""){
+  await dbPut("media",{
+    key:mediaKey(cardId,kind),
+    user_id:currentUser.id,
+    card_id:cardId,
+    kind,
+    blob,
+    name,
+    cloud_path:cloudPath,
+    saved_at:new Date().toISOString()
+  });
+}
+async function getMediaBlob(cardId,kind){
+  const rec=await dbGet("media",mediaKey(cardId,kind));
+  return rec?.blob ? rec : null;
+}
+async function cacheSnapshot(){
+  if(!currentUser) return;
+  await dbPut("state",{
+    key:OFFLINE_STATE_KEY,
+    user_id:currentUser.id,
+    cards,
+    decks,
+    settings,
+    learningStats,
+    reviewHistory,
+    cached_at:new Date().toISOString()
+  });
+}
+async function loadSnapshot(){
+  if(!currentUser) return false;
+  const snap=await dbGet("state",OFFLINE_STATE_KEY);
+  if(!snap || snap.user_id!==currentUser.id) return false;
+  cards=Array.isArray(snap.cards)?snap.cards:[];
+  decks=Array.isArray(snap.decks)?snap.decks:[];
+  settings=snap.settings||{days5:"",days6:"",days7:""};
+  learningStats=snap.learningStats||{
+    today:{total:0,correct:0,unsure:0,wrong:0},
+    daily7:[],daily30:[],biweekly:[],deck30:[],weak:[]
+  };
+  reviewHistory=Array.isArray(snap.reviewHistory)?snap.reviewHistory:[];
+  syncSettingsInputs();
+  renderDeckOptions();
+  renderDeckList();
+  updateHeader();
+  renderCardList();
+  resetSession(false);
+  renderStats();
+  return true;
+}
+async function enqueueReview(payload){
+  await dbPut("queue",{
+    id:payload.client_event_id,
+    type:"review",
+    user_id:currentUser.id,
+    created_at:payload.created_at,
+    payload
+  });
+  await updateConnectionStatus();
+}
+async function enqueueSettings(payload){
+  await dbPut("queue",{
+    id:`settings:${currentUser.id}`,
+    type:"settings",
+    user_id:currentUser.id,
+    created_at:new Date().toISOString(),
+    payload
+  });
+  await updateConnectionStatus();
+}
+async function pendingCount(){
+  if(!currentUser) return 0;
+  const all=await dbGetAll("queue");
+  return all.filter(x=>x.user_id===currentUser.id).length;
+}
+async function updateConnectionStatus(){
+  const el=document.getElementById("connectionStatus");
+  if(!el) return;
+  let pending=0;
+  try{pending=await pendingCount()}catch{}
+  el.className="connection-pill";
+  if(!isOnline()){
+    el.classList.add("offline");
+    el.textContent=pending?`オフライン ・ 未同期 ${pending}`:"オフライン";
+  }else if(pending){
+    el.classList.add("pending");
+    el.textContent=`オンライン ・ 未同期 ${pending}`;
+  }else{
+    el.textContent="オンライン ・ 同期済み";
+  }
+}
+function requireOnline(actionName="この操作"){
+  if(isOnline()) return true;
+  alert(`${actionName}はオンライン時に行ってください。\n\nオフライン中も復習・評価・カード閲覧はできます。`);
+  return false;
+}
+async function flushReviewQueue(){
+  if(queueFlushRunning || !isOnline() || !currentUser || !sb)return;
+  queueFlushRunning=true;
+  try{
+    const actions=(await dbGetAll("queue"))
+      .filter(x=>x.user_id===currentUser.id)
+      .sort((a,b)=>String(a.created_at).localeCompare(String(b.created_at)));
+
+    for(const action of actions){
+      try{
+        if(action.type==="review"){
+          const p=action.payload;
+          const {error:updateError}=await sb.from("cards")
+            .update({
+              score:p.score_after,
+              wrong_streak:p.wrong_streak_after,
+              due_date:p.due_date,
+              updated_at:p.created_at
+            })
+            .eq("id",p.card_id);
+          if(updateError)throw updateError;
+
+          const {error:historyError}=await sb.from("review_history").insert({
+            user_id:currentUser.id,
+            card_id:p.card_id,
+            evaluation:p.evaluation,
+            applied_delta:p.applied_delta,
+            score_after:p.score_after,
+            due_date:p.due_date,
+            created_at:p.created_at,
+            client_event_id:p.client_event_id
+          });
+          if(historyError && historyError.code!=="23505")throw historyError;
+        }else if(action.type==="settings"){
+          const {error}=await sb.from("user_settings")
+            .upsert(action.payload,{onConflict:"user_id"});
+          if(error)throw error;
+        }
+
+        await dbDelete("queue",action.id);
+      }catch(err){
+        console.error("Queue sync failed",err);
+        break;
+      }
+    }
+  }finally{
+    queueFlushRunning=false;
+    await updateConnectionStatus();
+  }
+}
+function localDateFromDate(d){
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,"0");
+  const day=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+function recomputeLocalStats(){
+  const now=new Date();
+  const today=localDateFromDate(now);
+  const dayKeys=[];
+  for(let i=29;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-i);
+    dayKeys.push(localDateFromDate(d));
+  }
+  const recent=reviewHistory.filter(h=>{
+    const d=new Date(h.created_at);
+    return !Number.isNaN(d.getTime());
+  });
+  const byDay=new Map(dayKeys.map(k=>[k,0]));
+  for(const h of recent){
+    const key=localDateFromDate(new Date(h.created_at));
+    if(byDay.has(key)) byDay.set(key,(byDay.get(key)||0)+1);
+  }
+  const todays=recent.filter(h=>localDateFromDate(new Date(h.created_at))===today);
+  const todayStats={
+    total:todays.length,
+    correct:todays.filter(h=>h.evaluation===1).length,
+    unsure:todays.filter(h=>h.evaluation===0).length,
+    wrong:todays.filter(h=>h.evaluation===-1).length
+  };
+  const daily30=dayKeys.map(day=>({day,count:byDay.get(day)||0}));
+  const daily7=daily30.slice(-7);
+
+  const biweekly=[];
+  for(let bucket=5;bucket>=0;bucket--){
+    const end=new Date(now.getFullYear(),now.getMonth(),now.getDate()-bucket*14);
+    const start=new Date(end.getFullYear(),end.getMonth(),end.getDate()-13);
+    const startKey=localDateFromDate(start), endKey=localDateFromDate(end);
+    const count=recent.filter(h=>{
+      const k=localDateFromDate(new Date(h.created_at));
+      return k>=startKey && k<=endKey;
+    }).length;
+    biweekly.push({start_day:startKey,end_day:endKey,count});
+  }
+
+  const cutoff=new Date(now.getFullYear(),now.getMonth(),now.getDate()-29);
+  const h30=recent.filter(h=>new Date(h.created_at)>=cutoff);
+  const deckMap=new Map();
+  for(const h of h30){
+    const c=cards.find(x=>x.id===h.card_id);
+    const did=c?.deck_id||null;
+    const key=did||"unclassified";
+    if(!deckMap.has(key)) deckMap.set(key,{
+      deck_id:did,deck_name:deckName(did),total:0,correct:0,unsure:0,wrong:0
+    });
+    const s=deckMap.get(key);
+    s.total++;
+    if(h.evaluation===1)s.correct++;
+    if(h.evaluation===0)s.unsure++;
+    if(h.evaluation===-1)s.wrong++;
+  }
+  const deck30=[...deckMap.values()].sort((a,b)=>b.total-a.total || a.deck_name.localeCompare(b.deck_name,"ja"));
+
+  const weak=cards.map(c=>{
+    const hs=h30.filter(h=>h.card_id===c.id);
+    const wrong=hs.filter(h=>h.evaluation===-1).length;
+    const unsure=hs.filter(h=>h.evaluation===0).length;
+    return {
+      card_id:c.id,front:c.front,score:Number(c.score||0),
+      deck_id:c.deck_id||null,deck_name:deckName(c.deck_id),
+      wrong,unsure,
+      weight:wrong*3+unsure+Math.max(0,-Number(c.score||0))
+    };
+  }).filter(x=>x.wrong>0||x.unsure>0||x.score<=0)
+    .sort((a,b)=>b.weight-a.weight||b.wrong-a.wrong||b.unsure-a.unsure||a.score-b.score)
+    .slice(0,10)
+    .map(({weight,...x})=>x);
+
+  learningStats={today:todayStats,daily7,daily30,biweekly,deck30,weak};
+  renderStats();
+}
+async function cacheCloudMedia(card,kind,path,name){
+  if(!path || !isOnline()) return false;
+  const bucket=kind==="audio"?AUDIO_BUCKET:IMAGE_BUCKET;
+  const {data,error}=await sb.storage.from(bucket).createSignedUrl(path,3600);
+  if(error) throw error;
+  const res=await fetch(data.signedUrl);
+  if(!res.ok) throw new Error(`メディア取得失敗 (${res.status})`);
+  const blob=await res.blob();
+  await saveMediaBlob(card.id,kind,blob,name||"",path);
+  return true;
+}
+async function downloadCardsMediaOffline(targetCards,label="カード"){
+  if(!requireOnline("オフライン用ダウンロード")) return;
+  const unique=targetCards||[];
+  let total=0,done=0;
+  for(const c of unique){
+    if(c.audio_path) total++;
+    if(c.front_image_path) total++;
+    if(c.back_image_path) total++;
+  }
+  if(total===0){
+    toast("保存する画像・音声はありません");
+    return;
+  }
+  const btn=document.getElementById("downloadAllOfflineBtn");
+  if(btn)setBusy(btn,true,`保存中 0/${total}`);
+  try{
+    for(const c of unique){
+      const items=[
+        ["audio",c.audio_path,c.audio_name],
+        ["front",c.front_image_path,c.front_image_name],
+        ["back",c.back_image_path,c.back_image_name]
+      ];
+      for(const [kind,path,name] of items){
+        if(!path) continue;
+        const existing=await getMediaBlob(c.id,kind);
+        if(!existing) await cacheCloudMedia(c,kind,path,name);
+        done++;
+        if(btn)btn.textContent=`保存中 ${done}/${total}`;
+      }
+    }
+    toast(`${label}の画像・音声を端末に保存しました`);
+  }catch(err){
+    console.error(err);
+    alert("オフライン保存に失敗しました: "+err.message);
+  }finally{
+    if(btn)setBusy(btn,false);
+  }
+}
+async function clearOfflineMedia(){
+  if(!confirm("このiPhoneに保存した画像・音声キャッシュを削除しますか？\nクラウド上のファイルは削除されません。"))return;
+  await dbClear("media");
+  toast("端末の画像・音声キャッシュを削除しました");
+}
+async function registerServiceWorker(){
+  if(!("serviceWorker" in navigator)) return;
+  try{
+    await navigator.serviceWorker.register("./service-worker.js",{scope:"./"});
+  }catch(err){
+    console.error("Service worker registration failed",err);
+  }
+}
+
+function localDateString(date = new Date()){
+  const y = date.getFullYear();
+  const m = String(date.getMonth()+1).padStart(2,"0");
+  const d = String(date.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
+}
+function addDays(base, days){
+  const d = new Date(base.getFullYear(), base.getMonth(), base.getDate());
+  d.setDate(d.getDate()+days);
+  return localDateString(d);
+}
+function escapeHtml(s=""){
+  return String(s).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[ch]));
+}
+function toast(msg){
+  const el = document.getElementById("toast");
+  el.textContent = msg; el.classList.add("show");
+  setTimeout(()=>el.classList.remove("show"),1800);
+}
+function setBusy(button, busy, busyText="処理中…"){
+  if(!button) return;
+  if(busy){
+    button.dataset.oldText = button.textContent;
+    button.textContent = busyText;
+    button.disabled = true;
+  }else{
+    button.textContent = button.dataset.oldText || button.textContent;
+    button.disabled = false;
+  }
+}
+function dueToday(card){
+  return !card.due_date || card.due_date <= localDateString();
+}
+function showOnly(id){
+  ["configError","authScreen","mainApp"].forEach(x => document.getElementById(x).classList.toggle("hidden", x !== id));
+}
+function decodeJwtRole(key){
+  try{
+    const parts = key.split(".");
+    if(parts.length !== 3) return "";
+    const normalized = parts[1].replace(/-/g,"+").replace(/_/g,"/");
+    const payload = JSON.parse(atob(normalized.padEnd(Math.ceil(normalized.length/4)*4,"=")));
+    return payload.role || "";
+  }catch{return ""}
+}
+function validateConfig(){
+  const cfg = window.MY_ANKI_CONFIG || {};
+  const url = String(cfg.supabaseUrl || "").trim();
+  const key = String(cfg.supabasePublishableKey || "").trim();
+
+  if(!url || !key || url.includes("YOUR_PROJECT") || key.includes("YOUR_PUBLISHABLE")){
+    throw new Error("config.js が未設定です。SupabaseのProject URLとPublishable Keyを入力してください。");
+  }
+  if(key.startsWith("sb_secret_") || decodeJwtRole(key) === "service_role"){
+    throw new Error("危険なキーが設定されています。Secret Key / service_role はブラウザやGitHubに置けません。Publishable Keyを使用してください。");
+  }
+  if(!/^https:\/\/[a-zA-Z0-9.-]+\/?$/.test(url)){
+    throw new Error("Supabase URLの形式を確認してください。https://... のProject URLを指定します。");
+  }
+  return {url, key};
+}
+
+async function init(){
+  registerServiceWorker();
+  window.addEventListener("online",async()=>{
+    await updateConnectionStatus();
+    await flushReviewQueue();
+    if(currentUser) await loadAll();
+  });
+  window.addEventListener("offline",()=>updateConnectionStatus());
+  try{
+    const {url,key} = validateConfig();
+    sb = window.supabase.createClient(url, key, {
+      auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}
+    });
+  }catch(err){
+    document.getElementById("configErrorText").textContent = err.message;
+    showOnly("configError");
+    return;
+  }
+
+  const {data:{session}} = await sb.auth.getSession();
+  currentUser = session?.user || null;
+
+  sb.auth.onAuthStateChange((_event, sessionNow)=>{
+    const nextUser = sessionNow?.user || null;
+    const changed = nextUser?.id !== currentUser?.id;
+    currentUser = nextUser;
+    if(!currentUser){
+      cards=[]; decks=[]; settings={days5:"",days6:"",days7:""};
+      learningStats={today:{total:0,correct:0,unsure:0,wrong:0},daily7:[],daily30:[],biweekly:[],deck30:[],weak:[]};
+      showOnly("authScreen");
+    }else if(changed){
+      enterApp();
+    }
+  });
+
+  if(currentUser) await enterApp();
+  else showOnly("authScreen");
+}
+
+async function enterApp(){
+  if(!currentUser) return;
+  document.getElementById("userEmail").textContent = currentUser.email || "";
+  showOnly("mainApp");
+  document.getElementById("dueInput").value = localDateString();
+  await updateConnectionStatus();
+  await loadAll();
+}
+
+async function loadAll(){
+  if(!currentUser) return;
+  const syncBtn=document.getElementById("syncBtn");
+  setBusy(syncBtn,true,isOnline()?"同期中…":"オフライン読込…");
+  try{
+    if(!isOnline()){
+      const ok=await loadSnapshot();
+      if(!ok){
+        alert("この端末にはまだオフライン用データがありません。\n一度オンラインでログインして同期してください。");
+      }else{
+        toast("端末に保存したデータを読み込みました");
+      }
+      return;
+    }
+
+    await flushReviewQueue();
+
+    const since=new Date();
+    since.setDate(since.getDate()-90);
+
+    const [cardsRes,decksRes,settingsRes,historyRes]=await Promise.all([
+      sb.from("cards")
+        .select("id,user_id,front,back,score,due_date,wrong_streak,audio_path,audio_name,front_image_path,front_image_name,back_image_path,back_image_name,deck_id,created_at,updated_at")
+        .order("created_at",{ascending:true}),
+      sb.from("decks")
+        .select("id,user_id,name,created_at")
+        .order("name",{ascending:true}),
+      sb.from("user_settings")
+        .select("days_5,days_6,days_7")
+        .eq("user_id",currentUser.id)
+        .maybeSingle(),
+      sb.from("review_history")
+        .select("card_id,evaluation,applied_delta,score_after,due_date,created_at")
+        .gte("created_at",since.toISOString())
+        .order("created_at",{ascending:true})
+    ]);
+    if(cardsRes.error)throw cardsRes.error;
+    if(decksRes.error)throw decksRes.error;
+    if(settingsRes.error)throw settingsRes.error;
+    if(historyRes.error)throw historyRes.error;
+
+    cards=cardsRes.data||[];
+    decks=decksRes.data||[];
+    reviewHistory=historyRes.data||[];
+
+    const s=settingsRes.data||{};
+    settings={
+      days5:s.days_5??"",
+      days6:s.days_6??"",
+      days7:s.days_7??""
+    };
+
+    syncSettingsInputs();
+    renderDeckOptions();
+    renderDeckList();
+    updateHeader();
+    renderCardList();
+    resetSession(false);
+    await loadStats(false);
+    await cacheSnapshot();
+    await updateConnectionStatus();
+    toast("クラウドと同期しました");
+  }catch(err){
+    console.error(err);
+    const ok=await loadSnapshot().catch(()=>false);
+    if(ok){
+      toast("通信できないため端末データを表示しています");
+    }else{
+      alert("同期に失敗しました: "+err.message);
+    }
+  }finally{
+    setBusy(syncBtn,false);
+  }
+}
+
+function percent(correct, wrong){
+  const denom=Number(correct||0)+Number(wrong||0);
+  if(!denom)return null;
+  return Math.round((Number(correct||0)/denom)*100);
+}
+function dateLabel(isoDate){
+  const parts=String(isoDate||"").split("-");
+  if(parts.length!==3)return String(isoDate||"");
+  return `${Number(parts[1])}/${Number(parts[2])}`;
+}
+function rangeLabel(startDate,endDate){
+  return `${dateLabel(startDate)}–${dateLabel(endDate)}`;
+}
+async function loadStats(showMessage=true){
+  if(!currentUser || !sb)return;
+  const btn=document.getElementById("refreshStatsBtn");
+  if(btn)setBusy(btn,true,"更新中…");
+  try{
+    if(!isOnline()){
+      recomputeLocalStats();
+      if(showMessage)toast("端末内の履歴から集計しました");
+      return;
+    }
+    let tz="Asia/Tokyo";
+    try{
+      tz=Intl.DateTimeFormat().resolvedOptions().timeZone || tz;
+    }catch{}
+    const {data,error}=await sb.rpc("get_learning_stats",{p_tz:tz});
+    if(error)throw error;
+
+    learningStats={
+      today:data?.today || {total:0,correct:0,unsure:0,wrong:0},
+      daily7:Array.isArray(data?.daily7)?data.daily7:[],
+      daily30:Array.isArray(data?.daily30)?data.daily30:[],
+      biweekly:Array.isArray(data?.biweekly)?data.biweekly:[],
+      deck30:Array.isArray(data?.deck30)?data.deck30:[],
+      weak:Array.isArray(data?.weak)?data.weak:[]
+    };
+    renderStats();
+    cacheSnapshot().catch(()=>{});
+    if(showMessage)toast("統計を更新しました");
+  }catch(err){
+    console.error(err);
+    const root=document.getElementById("statsContent");
+    if(root){
+      root.innerHTML=`<div class="errorbox">統計を読み込めませんでした。\n${escapeHtml(err.message)}</div>`;
+    }
+    if(showMessage)alert("統計の読み込みに失敗しました: "+err.message);
+  }finally{
+    if(btn)setBusy(btn,false);
+  }
+}
+function renderStats(){
+  const root=document.getElementById("statsContent");
+  if(!root)return;
+
+  const t=learningStats.today || {};
+  const todayAccuracy=percent(t.correct,t.wrong);
+  const daily=learningStats.daily7 || [];
+  const maxDaily=Math.max(1,...daily.map(x=>Number(x.count||0)));
+
+  const activityHtml=daily.length
+    ? daily.map(x=>{
+        const count=Number(x.count||0);
+        const height=Math.max(count?8:2,Math.round((count/maxDaily)*100));
+        return `<div class="activity-item">
+          <div class="activity-count">${count}</div>
+          <div class="activity-bar-wrap"><div class="activity-bar" style="height:${height}%"></div></div>
+          <div class="activity-day">${escapeHtml(dateLabel(x.day))}</div>
+        </div>`;
+      }).join("")
+    : `<div class="help">まだ履歴がありません。</div>`;
+
+  const daily30=learningStats.daily30 || [];
+  const maxDaily30=Math.max(1,...daily30.map(x=>Number(x.count||0)));
+  const daily30Html=daily30.length
+    ? daily30.map(x=>{
+        const count=Number(x.count||0);
+        const height=Math.max(count?8:2,Math.round((count/maxDaily30)*100));
+        return `<div class="activity-item">
+          <div class="activity-count">${count}</div>
+          <div class="activity-bar-wrap"><div class="activity-bar" style="height:${height}%"></div></div>
+          <div class="activity-day">${escapeHtml(dateLabel(x.day))}</div>
+        </div>`;
+      }).join("")
+    : `<div class="help">まだ履歴がありません。</div>`;
+
+  const biweekly=learningStats.biweekly || [];
+  const maxBiweekly=Math.max(1,...biweekly.map(x=>Number(x.count||0)));
+  const biweeklyHtml=biweekly.length
+    ? biweekly.map(x=>{
+        const count=Number(x.count||0);
+        const height=Math.max(count?8:2,Math.round((count/maxBiweekly)*100));
+        return `<div class="activity-item">
+          <div class="activity-count">${count}</div>
+          <div class="activity-bar-wrap"><div class="activity-bar" style="height:${height}%"></div></div>
+          <div class="activity-day">${escapeHtml(rangeLabel(x.start_day,x.end_day))}</div>
+        </div>`;
+      }).join("")
+    : `<div class="help">まだ履歴がありません。</div>`;
+
+  const deckHtml=(learningStats.deck30||[]).length
+    ? learningStats.deck30.map(d=>{
+        const acc=percent(d.correct,d.wrong);
+        const width=acc===null?0:acc;
+        return `<div class="deck-stat-row">
+          <div class="deck-stat-top">
+            <div class="deck-stat-name">${escapeHtml(d.deck_name||"未分類")}</div>
+            <strong>${acc===null?"—":acc+"%"}</strong>
+          </div>
+          <div class="deck-stat-meta">30日間 ${Number(d.total||0)}回 ・ 正答 ${Number(d.correct||0)} ・ 不安 ${Number(d.unsure||0)} ・ 誤答 ${Number(d.wrong||0)}</div>
+          <div class="progress-track"><div class="progress-fill" style="width:${width}%"></div></div>
+        </div>`;
+      }).join("")
+    : `<div class="help">直近30日の復習履歴がありません。</div>`;
+
+  const weakHtml=(learningStats.weak||[]).length
+    ? learningStats.weak.map(w=>`<div class="weak-row">
+        <div class="weak-title">${escapeHtml(w.front||"")}</div>
+        <div class="weak-meta"><span class="deck-badge">${escapeHtml(w.deck_name||"未分類")}</span> ・ 評価値 ${Number(w.score||0)} ・ 30日誤答 ${Number(w.wrong||0)} ・ 不安 ${Number(w.unsure||0)}</div>
+      </div>`).join("")
+    : `<div class="help">苦手候補はまだありません。</div>`;
+
+  root.innerHTML=`
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">今日の復習</div>
+        <div class="stat-value">${Number(t.total||0)}</div>
+        <div class="stat-sub">回答回数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">今日の正答率</div>
+        <div class="stat-value">${todayAccuracy===null?"—":todayAccuracy+"%"}</div>
+        <div class="stat-sub">不安は分母から除外</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">正答 / 不安</div>
+        <div class="stat-value">${Number(t.correct||0)} / ${Number(t.unsure||0)}</div>
+        <div class="stat-sub">今日</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">誤答</div>
+        <div class="stat-value">${Number(t.wrong||0)}</div>
+        <div class="stat-sub">今日</div>
+      </div>
+    </div>
+
+    <div class="stats-section">
+      <h3>直近7日の学習量</h3>
+      <div class="activity-chart">${activityHtml}</div>
+    </div>
+
+    <div class="stats-section">
+      <h3>日ごとの学習量（直近30日）</h3>
+      <div class="help" style="margin-bottom:8px">横にスクロールできます。</div>
+      <div class="activity-scroll">
+        <div class="activity-chart daily30">${daily30Html}</div>
+      </div>
+    </div>
+
+    <div class="stats-section">
+      <h3>2週間ごとの学習量（直近12週間）</h3>
+      <div class="activity-scroll">
+        <div class="activity-chart biweekly">${biweeklyHtml}</div>
+      </div>
+    </div>
+
+    <div class="stats-section">
+      <h3>デッキ別正答率（直近30日）</h3>
+      <div class="deck-stat-list">${deckHtml}</div>
+    </div>
+
+    <div class="stats-section">
+      <h3>苦手カード</h3>
+      <div class="help" style="margin-bottom:9px">直近30日の誤答・不安と現在の評価値から候補を表示します。</div>
+      <div class="weak-list">${weakHtml}</div>
+    </div>`;
+}
+
+function deckName(deckId){
+  if(!deckId) return "未分類";
+  return decks.find(d=>d.id===deckId)?.name || "未分類";
+}
+function matchesDeck(card, value){
+  if(value === "all") return true;
+  if(value === "unclassified") return !card.deck_id;
+  return card.deck_id === value;
+}
+function renderDeckOptions(){
+  const review=document.getElementById("reviewDeckFilter");
+  const cardFilter=document.getElementById("cardsDeckFilter");
+  const add=document.getElementById("deckInput");
+  const allOptions = [
+    `<option value="all">すべてのデッキ</option>`,
+    `<option value="unclassified">未分類</option>`,
+    ...decks.map(d=>`<option value="${d.id}">${escapeHtml(d.name)}</option>`)
+  ].join("");
+  const addOptions = [
+    `<option value="unclassified">未分類</option>`,
+    ...decks.map(d=>`<option value="${d.id}">${escapeHtml(d.name)}</option>`)
+  ].join("");
+
+  review.innerHTML=allOptions;
+  cardFilter.innerHTML=allOptions;
+  add.innerHTML=addOptions;
+
+  if([...review.options].some(o=>o.value===selectedReviewDeck)) review.value=selectedReviewDeck;
+  else { selectedReviewDeck="all"; review.value="all"; }
+
+  if([...cardFilter.options].some(o=>o.value===selectedCardsDeck)) cardFilter.value=selectedCardsDeck;
+  else { selectedCardsDeck="all"; cardFilter.value="all"; }
+}
+function updateHeader(){
+  const due = cards.filter(dueToday).length;
+  document.getElementById("headerStats").innerHTML = `<span class="sync-dot"></span>クラウド同期 ・ 全 ${cards.length} 枚 ・ 今日 ${due} 枚`;
+}
+function resetSession(showToast=true){
+  sessionQueue = cards.filter(c=>dueToday(c) && matchesDeck(c,selectedReviewDeck)).map(c=>c.id);
+  sessionIndex = 0;
+  answerShown = false;
+  renderReview();
+  if(showToast) toast("復習対象を更新しました");
+}
+function currentCard(){
+  const id = sessionQueue[sessionIndex];
+  return cards.find(c=>c.id===id);
+}
+async function attachSignedAudio(card){
+  const target=document.getElementById("audioForCurrentCard");
+  if(!target || !card?.audio_path)return;
+
+  const local=await getMediaBlob(card.id,"audio").catch(()=>null);
+  if(local?.blob){
+    const url=URL.createObjectURL(local.blob);
+    target.innerHTML=`<audio controls preload="metadata" src="${url}"></audio>`;
+    return;
+  }
+  if(!isOnline()){
+    target.innerHTML=`<span class="muted">この音声はオフライン保存されていません。</span>`;
+    return;
+  }
+
+  target.innerHTML=`<span class="muted">音声を準備中…</span>`;
+  const {data,error}=await sb.storage.from(AUDIO_BUCKET).createSignedUrl(card.audio_path,3600);
+  if(error){
+    console.error(error);
+    target.innerHTML=`<span class="muted">音声を読み込めませんでした。</span>`;
+    return;
+  }
+  if(!document.getElementById("audioForCurrentCard"))return;
+  target.innerHTML=`<audio controls preload="metadata" src="${escapeHtml(data.signedUrl)}"></audio>`;
+}
+async function attachSignedImage(card,side){
+  const isFront=side==="front";
+  const path=isFront?card?.front_image_path:card?.back_image_path;
+  if(!path)return;
+
+  const targetId=isFront?"imageForCurrentCardFront":"imageForCurrentCardBack";
+  const target=document.getElementById(targetId);
+  if(!target)return;
+
+  const local=await getMediaBlob(card.id,isFront?"front":"back").catch(()=>null);
+  if(local?.blob){
+    const url=URL.createObjectURL(local.blob);
+    target.innerHTML=`<img src="${url}" alt="${isFront?"表面":"裏面"}画像">`;
+    return;
+  }
+  if(!isOnline()){
+    target.innerHTML=`<span class="muted">この画像はオフライン保存されていません。</span>`;
+    return;
+  }
+
+  target.innerHTML=`<span class="muted">画像を準備中…</span>`;
+  const {data,error}=await sb.storage.from(IMAGE_BUCKET).createSignedUrl(path,3600);
+  if(error){
+    console.error(error);
+    target.innerHTML=`<span class="muted">画像を読み込めませんでした。</span>`;
+    return;
+  }
+  const stillThere=document.getElementById(targetId);
+  if(!stillThere)return;
+  stillThere.innerHTML=`<img src="${escapeHtml(data.signedUrl)}" alt="${isFront?"表面":"裏面"}画像">`;
+}
+function renderReview(){
+  const root = document.getElementById("reviewContent");
+  if(sessionIndex >= sessionQueue.length){
+    root.innerHTML = `<div class="empty"><h2>今日の復習は完了 🎉</h2><p>他端末で更新した場合は「同期」、今日の誤答をもう一度出す場合は「復習を更新」を押してください。</p></div>`;
+    return;
+  }
+  const c = currentCard();
+  if(!c){ sessionIndex++; renderReview(); return; }
+
+  const remaining = sessionQueue.length - sessionIndex;
+  root.innerHTML = `
+    <div class="review-wrap">
+      <div class="progress"><span>${sessionIndex+1} / ${sessionQueue.length}</span><span>残り ${remaining} 枚</span></div>
+      <div class="card">
+        <div class="score-pill">評価値 ${c.score} ・ 連続誤答 ${c.wrong_streak || 0}<span class="deck-badge">${escapeHtml(deckName(c.deck_id))}</span></div>
+        <div class="front">${escapeHtml(c.front)}</div>
+        ${c.front_image_path ? `<div id="imageForCurrentCardFront" class="image-wrap"></div>` : ""}
+        <div id="answerArea" class="${answerShown ? "" : "hidden"}">
+          <div class="divider"></div>
+          <div class="back">${escapeHtml(c.back)}</div>
+          ${c.back_image_path ? `<div id="imageForCurrentCardBack" class="image-wrap"></div>` : ""}
+          ${c.audio_path ? `<div id="audioForCurrentCard" class="audio-wrap"></div>` : ""}
+        </div>
+      </div>
+      <button id="showAnswerBtn" class="show-answer ${answerShown ? "hidden":""}">答えを見る</button>
+      <div id="ratingArea" class="rating ${answerShown ? "" : "hidden"}">
+        <button class="rate wrong" data-value="-1">誤答 <small>通常 -1 / 連続ミス -3</small></button>
+        <button class="rate unsure" data-value="0">不安 <small>±0</small></button>
+        <button class="rate correct" data-value="1">正答 <small>+1</small></button>
+      </div>
+    </div>`;
+
+  document.getElementById("showAnswerBtn")?.addEventListener("click", ()=>{
+    answerShown = true;
+    renderReview();
+  });
+  root.querySelectorAll(".rate").forEach(btn => btn.addEventListener("click", ()=>rateCard(Number(btn.dataset.value))));
+  if(c.front_image_path) attachSignedImage(c,"front");
+  if(answerShown && c.back_image_path) attachSignedImage(c,"back");
+  if(answerShown && c.audio_path) attachSignedAudio(c);
+}
+
+function getManualBucket(score){
+  if(score === 5) return "days5";
+  if(score === 6) return "days6";
+  if(score >= 7) return "days7";
+  return null;
+}
+async function intervalForScore(score){
+  if(score <= 0) return 0;
+  if(score === 1) return 1;
+  if(score === 2) return 3;
+  if(score === 3) return 7;
+  if(score === 4) return 14;
+
+  const bucket = getManualBucket(score);
+  let val = Number(settings[bucket]);
+  if(!Number.isFinite(val) || val < 1){
+    const label = score >= 7 ? "7点以上" : `${score}点`;
+    const entered = prompt(`${label}の次回復習までの日数を入力してください`, "");
+    val = Number(entered);
+    if(!Number.isFinite(val) || val < 1) return null;
+    settings[bucket] = String(Math.floor(val));
+    await saveSettingsToCloud(false);
+    syncSettingsInputs();
+  }
+  return Math.floor(val);
+}
+
+async function rateCard(evaluation){
+  const c=currentCard();
+  if(!c || !currentUser)return;
+  const buttons=[...document.querySelectorAll(".rate")];
+  buttons.forEach(b=>b.disabled=true);
+
+  try{
+    const streak=Number(c.wrong_streak||0);
+    const appliedDelta=evaluation===-1?(streak>=1?-3:-1):evaluation;
+    const newScore=Number(c.score||0)+appliedDelta;
+    const interval=await intervalForScore(newScore);
+    if(interval===null){
+      toast("日数が未設定のため評価を保存しませんでした");
+      return;
+    }
+
+    const nextStreak=evaluation===-1?streak+1:0;
+    const due=addDays(new Date(),interval);
+    const now=new Date().toISOString();
+    const clientEventId=crypto.randomUUID();
+
+    c.score=newScore;
+    c.wrong_streak=nextStreak;
+    c.due_date=due;
+    c.updated_at=now;
+
+    const localEvent={
+      client_event_id:clientEventId,
+      card_id:c.id,
+      evaluation,
+      applied_delta:appliedDelta,
+      score_after:newScore,
+      due_date:due,
+      created_at:now
+    };
+    reviewHistory.push(localEvent);
+
+    await enqueueReview({
+      ...localEvent,
+      wrong_streak_after:nextStreak
+    });
+
+    recomputeLocalStats();
+    await cacheSnapshot();
+
+    if(evaluation===-1 && appliedDelta===-3)toast("連続誤答：-3点");
+    else if(!isOnline())toast("オフライン保存しました");
+
+    updateHeader();
+    renderCardList();
+    sessionIndex++;
+    answerShown=false;
+    renderReview();
+
+    if(isOnline()){
+      flushReviewQueue().then(()=>updateConnectionStatus());
+    }
+  }catch(err){
+    console.error(err);
+    alert("評価の保存に失敗しました: "+err.message);
+  }finally{
+    buttons.forEach(b=>b.disabled=false);
+  }
+}
+
+function fileExtension(file){
+  const name = file.name || "";
+  const ext = name.includes(".") ? name.split(".").pop().toLowerCase().replace(/[^a-z0-9]/g,"") : "";
+  if(ext) return ext;
+  const map={"audio/mpeg":"mp3","audio/mp4":"m4a","audio/x-m4a":"m4a","audio/wav":"wav","audio/ogg":"ogg","audio/webm":"webm"};
+  return map[file.type] || "audio";
+}
+async function uploadAudio(file, cardId){
+  if(!file) return {path:null,name:null};
+  if(file.size > MAX_AUDIO_BYTES) throw new Error("音声は10MB以下にしてください。");
+  if(!file.type.startsWith("audio/")) throw new Error("音声ファイルを選択してください。");
+  const path = `${currentUser.id}/${cardId}/${crypto.randomUUID()}.${fileExtension(file)}`;
+  const {error} = await sb.storage.from(AUDIO_BUCKET).upload(path,file,{
+    cacheControl:"3600",
+    upsert:false,
+    contentType:file.type || undefined
+  });
+  if(error) throw error;
+  return {path,name:file.name};
+}
+
+function imageFileExtension(file){
+  const name = file.name || "";
+  const ext = name.includes(".") ? name.split(".").pop().toLowerCase().replace(/[^a-z0-9]/g,"") : "";
+  if(ext) return ext;
+  const map={
+    "image/jpeg":"jpg",
+    "image/png":"png",
+    "image/webp":"webp",
+    "image/gif":"gif",
+    "image/heic":"heic",
+    "image/heif":"heif"
+  };
+  return map[file.type] || "jpg";
+}
+async function uploadImage(file, cardId, side){
+  if(!file) return {path:null,name:null};
+  if(file.size > MAX_IMAGE_BYTES) throw new Error("画像は10MB以下にしてください。");
+  if(!file.type.startsWith("image/")) throw new Error("画像ファイルを選択してください。");
+
+  const path = `${currentUser.id}/${cardId}/${side}-${crypto.randomUUID()}.${imageFileExtension(file)}`;
+  const {error} = await sb.storage.from(IMAGE_BUCKET).upload(path,file,{
+    cacheControl:"3600",
+    upsert:false,
+    contentType:file.type || undefined
+  });
+  if(error) throw error;
+  return {path,name:file.name};
+}
+
+async function addCard(){
+  if(!requireOnline("カード追加"))return;
+  const button=document.getElementById("addBtn");
+  const front=document.getElementById("frontInput").value.trim();
+  const back=document.getElementById("backInput").value.trim();
+  if(!front || !back){toast("表と裏を入力してください");return}
+  setBusy(button,true,"保存中…");
+
+  let uploadedPath=null;
+  let uploadedFrontImagePath=null;
+  let uploadedBackImagePath=null;
+  try{
+    const id=crypto.randomUUID();
+    const score=Math.trunc(Number(document.getElementById("scoreInput").value||0));
+    const due=document.getElementById("dueInput").value||localDateString();
+    const selectedDeck=document.getElementById("deckInput").value;
+    const deckId=selectedDeck==="unclassified" ? null : selectedDeck;
+    const file=document.getElementById("audioInput").files?.[0] || null;
+    const frontImageFile=document.getElementById("frontImageInput").files?.[0] || null;
+    const backImageFile=document.getElementById("backImageInput").files?.[0] || null;
+    let audio={path:null,name:null};
+    let frontImage={path:null,name:null};
+    let backImage={path:null,name:null};
+
+    if(file){
+      audio=await uploadAudio(file,id);
+      uploadedPath=audio.path;
+    }
+    if(frontImageFile){
+      frontImage=await uploadImage(frontImageFile,id,"front");
+      uploadedFrontImagePath=frontImage.path;
+    }
+    if(backImageFile){
+      backImage=await uploadImage(backImageFile,id,"back");
+      uploadedBackImagePath=backImage.path;
+    }
+
+    const row={
+      id,
+      user_id:currentUser.id,
+      front,back,score,
+      due_date:due,
+      wrong_streak:0,
+      audio_path:audio.path,
+      audio_name:audio.name,
+      front_image_path:frontImage.path,
+      front_image_name:frontImage.name,
+      back_image_path:backImage.path,
+      back_image_name:backImage.name,
+      deck_id:deckId
+    };
+    const {data,error}=await sb.from("cards").insert(row).select().single();
+    if(error) throw error;
+
+    cards.push(data);
+    await cacheSnapshot();
+    clearAddForm();
+    updateHeader();renderCardList();resetSession(false);
+    toast("クラウドに保存しました");
+  }catch(err){
+    console.error(err);
+    if(uploadedPath){
+      await sb.storage.from(AUDIO_BUCKET).remove([uploadedPath]);
+    }
+    if(uploadedFrontImagePath){
+      await sb.storage.from(IMAGE_BUCKET).remove([uploadedFrontImagePath]);
+    }
+    if(uploadedBackImagePath){
+      await sb.storage.from(IMAGE_BUCKET).remove([uploadedBackImagePath]);
+    }
+    alert("カード追加に失敗しました: "+err.message);
+  }finally{
+    setBusy(button,false);
+  }
+}
+function clearAddForm(){
+  document.getElementById("frontInput").value="";
+  document.getElementById("backInput").value="";
+  document.getElementById("scoreInput").value="0";
+  document.getElementById("dueInput").value=localDateString();
+  document.getElementById("deckInput").value="unclassified";
+  document.getElementById("audioInput").value="";
+  const p=document.getElementById("audioPreview");
+  p.innerHTML="";p.classList.add("hidden");
+  if(audioPreviewUrl){URL.revokeObjectURL(audioPreviewUrl);audioPreviewUrl=null}
+
+  document.getElementById("frontImageInput").value="";
+  const fip=document.getElementById("frontImagePreview");
+  fip.innerHTML="";fip.classList.add("hidden");
+  if(frontImagePreviewUrl){URL.revokeObjectURL(frontImagePreviewUrl);frontImagePreviewUrl=null}
+
+  document.getElementById("backImageInput").value="";
+  const bip=document.getElementById("backImagePreview");
+  bip.innerHTML="";bip.classList.add("hidden");
+  if(backImagePreviewUrl){URL.revokeObjectURL(backImagePreviewUrl);backImagePreviewUrl=null}
+}
+function previewSelectedAudio(){
+  const input=document.getElementById("audioInput");
+  const preview=document.getElementById("audioPreview");
+  const file=input.files?.[0];
+  if(audioPreviewUrl){URL.revokeObjectURL(audioPreviewUrl);audioPreviewUrl=null}
+  if(!file){preview.classList.add("hidden");preview.innerHTML="";return}
+  if(file.size>MAX_AUDIO_BYTES){
+    input.value="";preview.classList.add("hidden");preview.innerHTML="";
+    alert("音声ファイルは10MB以下にしてください。");return;
+  }
+  audioPreviewUrl=URL.createObjectURL(file);
+  preview.innerHTML=`<audio controls preload="metadata" src="${audioPreviewUrl}"></audio><div class="help">${escapeHtml(file.name)}</div>`;
+  preview.classList.remove("hidden");
+}
+function previewSelectedImage(side){
+  const isFront=side==="front";
+  const input=document.getElementById(isFront ? "frontImageInput" : "backImageInput");
+  const preview=document.getElementById(isFront ? "frontImagePreview" : "backImagePreview");
+  const file=input.files?.[0];
+
+  if(isFront && frontImagePreviewUrl){
+    URL.revokeObjectURL(frontImagePreviewUrl);
+    frontImagePreviewUrl=null;
+  }
+  if(!isFront && backImagePreviewUrl){
+    URL.revokeObjectURL(backImagePreviewUrl);
+    backImagePreviewUrl=null;
+  }
+
+  if(!file){
+    preview.classList.add("hidden");
+    preview.innerHTML="";
+    return;
+  }
+  if(file.size>MAX_IMAGE_BYTES){
+    input.value="";
+    preview.classList.add("hidden");
+    preview.innerHTML="";
+    alert("画像ファイルは10MB以下にしてください。");
+    return;
+  }
+  if(!file.type.startsWith("image/")){
+    input.value="";
+    preview.classList.add("hidden");
+    preview.innerHTML="";
+    alert("画像ファイルを選択してください。");
+    return;
+  }
+
+  const url=URL.createObjectURL(file);
+  if(isFront) frontImagePreviewUrl=url;
+  else backImagePreviewUrl=url;
+
+  preview.innerHTML=`<img src="${url}" alt="${isFront ? "表面" : "裏面"}画像プレビュー"><div class="help">${escapeHtml(file.name)}</div>`;
+  preview.classList.remove("hidden");
+}
+
+function renderCardList(){
+  const q=(document.getElementById("searchInput")?.value||"").toLowerCase();
+  const root=document.getElementById("cardList");
+  if(!root)return;
+  const filtered=cards.filter(c=>
+    matchesDeck(c,selectedCardsDeck) &&
+    (c.front+"\n"+c.back).toLowerCase().includes(q)
+  );
+  if(!filtered.length){root.innerHTML=`<div class="empty"><p>カードがありません。</p></div>`;return}
+  root.innerHTML=filtered.map(c=>`
+    <div class="row">
+      <div>
+        <div class="row-title">${escapeHtml(c.front)}</div>
+        <div class="row-sub"><span class="deck-badge">${escapeHtml(deckName(c.deck_id))}</span> ・ 評価値 ${c.score} ・ 次回 ${escapeHtml(c.due_date||"未設定")} ・ 連続誤答 ${c.wrong_streak||0}${c.audio_path?" ・ 🔊 音声あり":""}${(c.front_image_path||c.back_image_path)?" ・ 🖼️ 画像あり":""}</div>
+      </div>
+      <div class="row-actions">
+        <button class="secondary" data-move="${c.id}">デッキ移動</button>
+        <button class="secondary" data-edit="${c.id}">編集</button>
+        <button class="danger" data-delete="${c.id}">削除</button>
+      </div>
+    </div>`).join("");
+  root.querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>deleteCard(b.dataset.delete)));
+  root.querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click",()=>editCard(b.dataset.edit)));
+  root.querySelectorAll("[data-move]").forEach(b=>b.addEventListener("click",()=>moveCardToDeck(b.dataset.move)));
+}
+async function moveCardToDeck(cardId){
+  if(!requireOnline("デッキ移動"))return;
+  const c=cards.find(x=>x.id===cardId);
+  if(!c)return;
+
+  const choices=[
+    {id:null,name:"未分類"},
+    ...decks.map(d=>({id:d.id,name:d.name}))
+  ];
+  const lines=choices.map((d,i)=>`${i+1}: ${d.name}`).join("\n");
+  const currentIndex=Math.max(0,choices.findIndex(d=>d.id===c.deck_id));
+  const entered=prompt(`移動先の番号を入力してください\n\n${lines}`,String(currentIndex+1));
+  if(entered===null)return;
+
+  const n=Number(entered);
+  if(!Number.isInteger(n) || n<1 || n>choices.length){
+    alert("一覧にある番号を入力してください。");
+    return;
+  }
+  const target=choices[n-1];
+  try{
+    const {data,error}=await sb.from("cards")
+      .update({deck_id:target.id,updated_at:new Date().toISOString()})
+      .eq("id",cardId)
+      .select()
+      .single();
+    if(error)throw error;
+    Object.assign(c,data);
+    await cacheSnapshot();
+    renderCardList();
+    renderDeckList();
+    resetSession(false);
+    toast(`「${target.name}」へ移動しました`);
+  }catch(err){
+    console.error(err);
+    alert("デッキ移動に失敗しました: "+err.message);
+  }
+}
+
+function renderDeckList(){
+  const root=document.getElementById("deckList");
+  if(!root)return;
+
+  const unclassifiedCount=cards.filter(c=>!c.deck_id).length;
+  const items=[
+    `<div class="deck-row">
+      <div><div class="deck-row-name">未分類</div><div class="deck-row-count">${unclassifiedCount}枚</div></div>
+      <div class="row-actions">
+        <button class="secondary" data-offline-deck="unclassified">オフライン保存</button>
+        <span class="muted">標準</span>
+      </div>
+    </div>`,
+    ...decks.map(d=>{
+      const count=cards.filter(c=>c.deck_id===d.id).length;
+      return `<div class="deck-row">
+        <div><div class="deck-row-name">${escapeHtml(d.name)}</div><div class="deck-row-count">${count}枚</div></div>
+        <div class="row-actions">
+          <button class="secondary" data-offline-deck="${d.id}">オフライン保存</button>
+          <button class="danger" data-delete-deck="${d.id}">削除</button>
+        </div>
+      </div>`;
+    })
+  ];
+  root.innerHTML=items.join("");
+  root.querySelectorAll("[data-delete-deck]").forEach(b=>b.addEventListener("click",()=>deleteDeck(b.dataset.deleteDeck)));
+  root.querySelectorAll("[data-offline-deck]").forEach(b=>b.addEventListener("click",async()=>{
+    const id=b.dataset.offlineDeck;
+    const target=id==="unclassified"?cards.filter(c=>!c.deck_id):cards.filter(c=>c.deck_id===id);
+    const label=id==="unclassified"?"未分類":deckName(id);
+    setBusy(b,true,"保存中…");
+    try{await downloadCardsMediaOffline(target,label)}
+    finally{setBusy(b,false)}
+  }));
+}
+
+async function createDeck(){
+  if(!requireOnline("デッキ作成"))return;
+  const input=document.getElementById("newDeckName");
+  const name=input.value.trim();
+  if(!name){toast("デッキ名を入力してください");return}
+  if(decks.some(d=>d.name.toLowerCase()===name.toLowerCase())){
+    alert("同じ名前のデッキがすでにあります。");
+    return;
+  }
+  const btn=document.getElementById("addDeckBtn");
+  setBusy(btn,true,"追加中…");
+  try{
+    const {data,error}=await sb.from("decks")
+      .insert({user_id:currentUser.id,name})
+      .select()
+      .single();
+    if(error)throw error;
+    decks.push(data);
+    await cacheSnapshot();
+    decks.sort((a,b)=>a.name.localeCompare(b.name,"ja"));
+    input.value="";
+    renderDeckOptions();
+    renderDeckList();
+    toast(`「${name}」を追加しました`);
+  }catch(err){
+    console.error(err);
+    alert("デッキ追加に失敗しました: "+err.message);
+  }finally{
+    setBusy(btn,false);
+  }
+}
+
+async function deleteDeck(id){
+  if(!requireOnline("デッキ削除"))return;
+  const d=decks.find(x=>x.id===id);
+  if(!d)return;
+  const count=cards.filter(c=>c.deck_id===id).length;
+  if(!confirm(`「${d.name}」を削除しますか？\n${count}枚のカードは削除されず「未分類」に移動します。`))return;
+
+  try{
+    const {error}=await sb.from("decks").delete().eq("id",id);
+    if(error)throw error;
+
+    cards.forEach(c=>{if(c.deck_id===id)c.deck_id=null});
+    decks=decks.filter(x=>x.id!==id);
+    await cacheSnapshot();
+
+    if(selectedReviewDeck===id)selectedReviewDeck="all";
+    if(selectedCardsDeck===id)selectedCardsDeck="all";
+
+    renderDeckOptions();
+    renderDeckList();
+    renderCardList();
+    resetSession(false);
+    toast("デッキを削除しました");
+  }catch(err){
+    console.error(err);
+    alert("デッキ削除に失敗しました: "+err.message);
+  }
+}
+
+async function deleteCard(id){
+  if(!requireOnline("カード削除"))return;
+  const c=cards.find(x=>x.id===id);if(!c)return;
+  if(!confirm("このカードをクラウドから削除しますか？"))return;
+  try{
+    if(c.audio_path){
+      const {error:storageError}=await sb.storage.from(AUDIO_BUCKET).remove([c.audio_path]);
+      if(storageError) throw storageError;
+    }
+    const imagePaths=[c.front_image_path,c.back_image_path].filter(Boolean);
+    if(imagePaths.length){
+      const {error:imageStorageError}=await sb.storage.from(IMAGE_BUCKET).remove(imagePaths);
+      if(imageStorageError) throw imageStorageError;
+    }
+    const {error}=await sb.from("cards").delete().eq("id",id);
+    if(error)throw error;
+    cards=cards.filter(x=>x.id!==id);
+    await cacheSnapshot();
+    updateHeader();renderCardList();renderDeckList();resetSession(false);toast("削除しました");
+  }catch(err){console.error(err);alert("削除に失敗しました: "+err.message)}
+}
+async function editCard(id){
+  if(!requireOnline("カード編集"))return;
+  const c=cards.find(x=>x.id===id);if(!c)return;
+  const front=prompt("表",c.front);if(front===null)return;
+  const back=prompt("裏",c.back);if(back===null)return;
+  const scoreText=prompt("評価値",String(c.score));if(scoreText===null)return;
+  const due=prompt("次回復習日 (YYYY-MM-DD)",c.due_date||localDateString());if(due===null)return;
+  const score=Math.trunc(Number(scoreText));
+  if(!Number.isFinite(score)){alert("評価値は数字で入力してください");return}
+  try{
+    const patch={front:front.trim()||c.front,back:back.trim()||c.back,score,due_date:due,updated_at:new Date().toISOString()};
+    const {data,error}=await sb.from("cards").update(patch).eq("id",id).select().single();
+    if(error)throw error;
+    Object.assign(c,data);
+    await cacheSnapshot();
+    updateHeader();renderCardList();renderDeckList();resetSession(false);toast("更新しました");
+  }catch(err){console.error(err);alert("更新に失敗しました: "+err.message)}
+}
+
+function syncSettingsInputs(){
+  document.getElementById("days5").value=settings.days5||"";
+  document.getElementById("days6").value=settings.days6||"";
+  document.getElementById("days7").value=settings.days7||"";
+}
+async function saveSettingsToCloud(showMessage=true){
+  const payload={
+    user_id:currentUser.id,
+    days_5:settings.days5===""?null:Number(settings.days5),
+    days_6:settings.days6===""?null:Number(settings.days6),
+    days_7:settings.days7===""?null:Number(settings.days7),
+    updated_at:new Date().toISOString()
+  };
+  for(const k of ["days_5","days_6","days_7"]){
+    if(payload[k]!==null && (!Number.isInteger(payload[k]) || payload[k]<1))throw new Error("日数は1以上の整数で入力してください。");
+  }
+  if(!isOnline()){
+    await enqueueSettings(payload);
+    await cacheSnapshot();
+    if(showMessage)toast("設定を端末に保存しました（オンライン復帰後に同期）");
+    return;
+  }
+  const {error}=await sb.from("user_settings").upsert(payload,{onConflict:"user_id"});
+  if(error)throw error;
+  await cacheSnapshot();
+  if(showMessage)toast("設定をクラウド保存しました");
+}
+async function saveSettingsFromUI(){
+  settings.days5=document.getElementById("days5").value.trim();
+  settings.days6=document.getElementById("days6").value.trim();
+  settings.days7=document.getElementById("days7").value.trim();
+  try{await saveSettingsToCloud(true)}
+  catch(err){console.error(err);alert("設定保存に失敗しました: "+err.message)}
+}
+
+async function authSubmit(){
+  const btn=document.getElementById("authSubmitBtn");
+  const message=document.getElementById("authMessage");
+  const email=document.getElementById("authEmail").value.trim();
+  const password=document.getElementById("authPassword").value;
+  if(!email || password.length<8){message.textContent="メールアドレスと8文字以上のパスワードを入力してください。";return}
+  setBusy(btn,true,authMode==="login"?"ログイン中…":"登録中…");
+  message.textContent="";
+  try{
+    if(authMode==="login"){
+      const {error}=await sb.auth.signInWithPassword({email,password});
+      if(error)throw error;
+    }else{
+      const redirectTo=new URL(".",window.location.href).href;
+      const {data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:redirectTo}});
+      if(error)throw error;
+      if(!data.session){
+        message.textContent="確認メールを送信しました。メール内のリンクを開いてからログインしてください。";
+      }
+    }
+  }catch(err){
+    console.error(err);
+    message.textContent="認証エラー: "+err.message;
+  }finally{setBusy(btn,false)}
+}
+function setAuthMode(mode){
+  authMode=mode;
+  document.getElementById("loginModeBtn").className=mode==="login"?"primary":"secondary";
+  document.getElementById("signupModeBtn").className=mode==="signup"?"primary":"secondary";
+  document.getElementById("authSubmitBtn").textContent=mode==="login"?"ログイン":"新規登録";
+  document.getElementById("authPassword").autocomplete=mode==="login"?"current-password":"new-password";
+  document.getElementById("authMessage").textContent="";
+}
+
+function dataUrlToBlob(dataUrl){
+  const [meta,b64]=dataUrl.split(",");
+  const mime=(meta.match(/data:([^;]+)/)||[])[1]||"application/octet-stream";
+  const bytes=atob(b64);
+  const arr=new Uint8Array(bytes.length);
+  for(let i=0;i<bytes.length;i++)arr[i]=bytes.charCodeAt(i);
+  return new Blob([arr],{type:mime});
+}
+async function migrateLegacy(){
+  if(!requireOnline("旧データ移行"))return;
+  const raw=localStorage.getItem(OLD_STORAGE_KEY);
+  const rawSettings=localStorage.getItem(OLD_SETTINGS_KEY);
+  if(!raw && !rawSettings){toast("旧ローカルデータは見つかりませんでした");return}
+  if(!confirm("このブラウザに残っている旧版データをクラウドへ追加します。既に同じカードがある場合は重複する可能性があります。続けますか？"))return;
+
+  const btn=document.getElementById("migrateBtn");
+  setBusy(btn,true,"移行中…");
+  try{
+    const legacyCards=raw?JSON.parse(raw):[];
+    if(!Array.isArray(legacyCards))throw new Error("旧カードデータの形式が不正です。");
+
+    let done=0;
+    for(const old of legacyCards){
+      const id=crypto.randomUUID();
+      let audioPath=null,audioName=old.audioName||null;
+      if(old.audioData && String(old.audioData).startsWith("data:audio/")){
+        const blob=dataUrlToBlob(old.audioData);
+        if(blob.size<=MAX_AUDIO_BYTES){
+          const fakeFile=new File([blob],audioName||"legacy-audio",{type:blob.type});
+          const audio=await uploadAudio(fakeFile,id);
+          audioPath=audio.path;
+          audioName=audio.name;
+        }
+      }
+      const row={
+        id,user_id:currentUser.id,
+        front:String(old.front||""),
+        back:String(old.back||""),
+        score:Math.trunc(Number(old.score||0)),
+        due_date:old.due||localDateString(),
+        wrong_streak:Math.max(0,Math.trunc(Number(old.wrongStreak||0))),
+        audio_path:audioPath,
+        audio_name:audioName,
+        front_image_path:null,
+        front_image_name:null,
+        back_image_path:null,
+        back_image_name:null,
+        deck_id:null
+      };
+      if(!row.front || !row.back)continue;
+      const {error}=await sb.from("cards").insert(row);
+      if(error)throw error;
+      done++;
+    }
+
+    if(rawSettings){
+      const oldS=JSON.parse(rawSettings);
+      settings={
+        days5:oldS.days5??settings.days5,
+        days6:oldS.days6??settings.days6,
+        days7:oldS.days7??settings.days7
+      };
+      await saveSettingsToCloud(false);
+    }
+
+    await loadAll();
+    alert(`${done}枚をクラウドへ取り込みました。\n確認後、不要ならブラウザの旧ローカルデータを削除できます。`);
+  }catch(err){
+    console.error(err);alert("移行に失敗しました: "+err.message);
+  }finally{setBusy(btn,false)}
+}
+
+function switchTab(id){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.tab===id));
+  ["review","add","cards","decks","stats","settings"].forEach(x=>document.getElementById(x).classList.toggle("hidden",x!==id));
+  if(id==="stats") loadStats(false);
+}
+
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>switchTab(t.dataset.tab)));
+document.getElementById("loginModeBtn").addEventListener("click",()=>setAuthMode("login"));
+document.getElementById("signupModeBtn").addEventListener("click",()=>setAuthMode("signup"));
+document.getElementById("authSubmitBtn").addEventListener("click",authSubmit);
+document.getElementById("authPassword").addEventListener("keydown",e=>{if(e.key==="Enter")authSubmit()});
+document.getElementById("logoutBtn").addEventListener("click",async()=>{await sb.auth.signOut()});
+document.getElementById("syncBtn").addEventListener("click",async()=>{
+  if(!isOnline()){
+    await loadSnapshot();
+    toast("現在オフラインです");
+    return;
+  }
+  await flushReviewQueue();
+  await loadAll();
+});
+document.getElementById("resetSessionBtn").addEventListener("click",()=>resetSession(true));
+document.getElementById("addBtn").addEventListener("click",addCard);
+document.getElementById("audioInput").addEventListener("change",previewSelectedAudio);
+document.getElementById("frontImageInput").addEventListener("change",()=>previewSelectedImage("front"));
+document.getElementById("backImageInput").addEventListener("change",()=>previewSelectedImage("back"));
+document.getElementById("searchInput").addEventListener("input",renderCardList);
+document.getElementById("reviewDeckFilter").addEventListener("change",e=>{
+  selectedReviewDeck=e.target.value;
+  resetSession(false);
+});
+document.getElementById("cardsDeckFilter").addEventListener("change",e=>{
+  selectedCardsDeck=e.target.value;
+  renderCardList();
+});
+document.getElementById("addDeckBtn").addEventListener("click",createDeck);
+document.getElementById("newDeckName").addEventListener("keydown",e=>{if(e.key==="Enter")createDeck()});
+document.getElementById("refreshStatsBtn").addEventListener("click",()=>loadStats(true));
+document.getElementById("saveSettingsBtn").addEventListener("click",saveSettingsFromUI);
+document.getElementById("migrateBtn").addEventListener("click",migrateLegacy);
+document.getElementById("downloadAllOfflineBtn").addEventListener("click",()=>downloadCardsMediaOffline(cards,"全カード"));
+document.getElementById("clearOfflineMediaBtn").addEventListener("click",clearOfflineMedia);
+
+setAuthMode("login");
+init();
+</script>
+</body>
+</html>
